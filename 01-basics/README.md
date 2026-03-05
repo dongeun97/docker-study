@@ -100,3 +100,50 @@ docker run -d -p 8080:80 nginx
 - Jenkins + Docker 조합: Jenkins가 코드 변경을 감지 -> Docker 이미지 빌드 -> 서버에 배포
 ```
 
+## 실습 3 - 직접 Deckerfile 작성해서 웹서버 만들기
+
+### 파일 구조
+```
+hello-docker/
+├── app.py
+└── Dockerfile
+
+ex) app.py: 재료
+    Dockerfile: 레시피
+
+
+### 흐름 구조
+app.py(소스) => Dockerfile(어떤 경로에 어떻게 올리는지) => docker build(이미지 생성) => docker run(컨테이너 실행)
+
+### app.py
+```python
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Hello! Docker is running!")
+
+HTTPServer(("", 8000), Handler).serve_forever()
+```
+
+### Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY app.py .
+CMD ["python", "app.py"]
+```
+
+### 빌드 & 실행
+```bash
+docker build -t my-app .
+docker run -p 8000:8000 my-app
+```
+
+브라우저에서 `http://localhost:8000` 접속 -> "Hello! Docker is running!" 확인
+
+
+
+
