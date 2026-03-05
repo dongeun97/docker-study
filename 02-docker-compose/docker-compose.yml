@@ -1,0 +1,9 @@
+services:
+  web:
+    image: nginx
+    ports:
+      - "8080:80"
+  app:
+    build: ../01-basics/hello-docker
+    ports:
+      - "8000:8000"
